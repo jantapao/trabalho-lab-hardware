@@ -1,2 +1,5 @@
 # Arquivos de Compilação
 *.cf
+
+# Arquivos de Simulação
+*.vcd

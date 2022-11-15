@@ -1,0 +1,70 @@
+library ieee, std;
+use ieee.std_logic_1164.all;
+use std.textio.all;
+use ieee.numeric_std.all;
+
+entity codec is
+  port (
+    interrupt: in std_logic; -- Interrupt signal
+    read_signal: in std_logic; -- Read signal
+    write_signal: in std_logic; -- Write signal
+    valid: out std_logic; -- Valid signal
+
+    -- Byte written to codec
+    codec_data_in : in std_logic_vector(7 downto 0);
+    -- Byte read from codec
+    codec_data_out : out std_logic_vector(7 downto 0)
+  );
+end codec;
+
+architecture algorithm of codec is
+begin
+  leitura: process (interrupt, read_signal) is
+    type t_arq is file of std_logic_vector ;
+    file arq_sinais : t_arq ;
+    variable file_data_out : std_logic_vector(7 downto 0) ;
+    variable status : file_open_status ;
+    variable tam_codec : natural ;
+
+  begin
+    if interrupt = '1' and read_signal = '1' and write_signal = '0' then
+      file_open(status, arq_sinais, "arquivo.dat", read_mode) ;
+      if status /= open_ok then
+        report "Erro na abertura do arquivo" severity warning ;
+        valid <= '0' ;
+      else
+        while not endfile(arq_sinais) loop
+          read(arq_sinais, file_data_out, tam_codec) ;
+          if tam_codec > file_data_out'length then
+            report "Pacote longo - Ignorado" severity warning ;
+          else
+            if tam_codec <= file_data_out'length then
+              codec_data_out <= file_data_out ;
+            end if ;
+          end if ;
+          valid <= '1' ;
+        end loop;
+        file_close(arq_sinais) ;
+      end if ;
+    end if ;
+  end process leitura ;
+
+  escrita: process (interrupt, write_signal, codec_data_in) is
+    type t_arq is file of std_logic_vector ;
+    file arq_sinais : t_arq ;
+    variable status : file_open_status ;
+  begin
+    if interrupt = '1' and write_signal = '1' and read_signal = '0' then
+      file_open(status, arq_sinais, "arquivo.dat", write_mode) ;
+      if status /= open_ok then
+        report "Erro na abertura do arquivo" severity warning ;
+        valid <= '0' ;
+      else
+        write(arq_sinais, codec_data_in) ;
+        valid <= '1' ;
+        file_close(arq_sinais) ;
+      end if ;
+    end if ;
+  end process escrita ;
+
+end algorithm ;
