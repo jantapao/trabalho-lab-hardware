@@ -26,14 +26,14 @@ begin
     write_signal <= '1' ;
     codec_data_in <= x"FF" ;
 
-    wait for 50 ns ;
+    wait for 10 ns ;
 
     assert valid = '1' report "Erro na Validação da Escrita" ;
 
     write_signal <= '0' ;
     read_signal <= '1' ;
 
-    wait for 50 ns ;
+    wait for 10 ns ;
 
     assert valid = '1' report "Erro na Validação da Leitura" ;
     assert codec_data_out = x"FF" report "Erro na Leitura" ;
@@ -42,21 +42,21 @@ begin
     write_signal <= '1' ;
     codec_data_in <= x"64" ;
 
-    wait for 50 ns ;
+    wait for 10 ns ;
 
     assert valid = '1' report "Erro na Validação da Escrita" ;
 
     write_signal <= '0' ;
     read_signal <= '1' ;
 
-    wait for 50 ns ;
+    wait for 10 ns ;
 
     assert valid = '1' report "Erro na Validação da Leitura" ;
     assert codec_data_out = x"64" report "Erro na Leitura" ;
  
     interrupt <= '0' ;
 
-    wait for 50 ns ;
+    wait for 10 ns ;
 
     report "Fim da Simulação" ;
 

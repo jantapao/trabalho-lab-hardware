@@ -19,7 +19,7 @@ end codec;
 
 architecture algorithm of codec is
 begin
-  leitura: process (interrupt, read_signal) is
+  leitura: process (interrupt, read_signal, write_signal) is
     type t_arq is file of std_logic_vector ;
     file arq_sinais : t_arq ;
     variable file_data_out : std_logic_vector(7 downto 0) ;
@@ -40,16 +40,16 @@ begin
           else
             if tam_codec <= file_data_out'length then
               codec_data_out <= file_data_out ;
+              valid <= '1' ;
             end if ;
           end if ;
-          valid <= '1' ;
         end loop;
         file_close(arq_sinais) ;
       end if ;
     end if ;
   end process leitura ;
 
-  escrita: process (interrupt, write_signal, codec_data_in) is
+  escrita: process (interrupt, read_signal, write_signal, codec_data_in) is
     type t_arq is file of std_logic_vector ;
     file arq_sinais : t_arq ;
     variable status : file_open_status ;
