@@ -29,7 +29,7 @@ begin
 
   begin
     if interrupt = '1' and read_signal = '1' and write_signal = '0' then
-      file_open(status, arq_sinais, "arquivo.dat", read_mode) ;
+      file_open(status, arq_sinais, "arquivo.txt", read_mode) ;
       if status /= open_ok then
         report "Erro na abertura do arquivo" severity warning ;
         exit_code := '0' ;
@@ -49,7 +49,7 @@ begin
       end if ;
     end if ;
     if interrupt = '1' and write_signal = '1' and read_signal = '0' then
-      file_open(status, arq_sinais, "arquivo.dat", write_mode) ;
+      file_open(status, arq_sinais, "arquivo_out.txt", write_mode) ;
       if status /= open_ok then
         report "Erro na abertura do arquivo" severity warning ;
         exit_code := '0' ;
